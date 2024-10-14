@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth, AuthContext } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const INITIAL_VALUE_LOGIN = {
   userName: "",
@@ -19,18 +19,23 @@ const INITIAL_VALUE_RESPONSE = {
 
 const SignInForm = () => {
   const [logInData, setLogInData] = useState(INITIAL_VALUE_LOGIN);
-  const { login } = useAuth();
+  const { login, isAuthenticated, responseErrorMessage } = useAuth();
   const [message, setMessage] = useState("");
-  const [response, setResponse] = useState(INITIAL_VALUE_RESPONSE);
-  const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
-    await login(logInData);
-    navigate("/");
+    const logInResponse = await login(logInData);
+
+    if (logInResponse.isSuccessfull) {
+      navigate("/");
+    } else {
+      console.log(logInResponse.errorMessage);
+      const errorMessage = logInResponse.errorMessage;
+      setMessage(errorMessage);
+    }
   };
 
   return (
@@ -105,10 +110,23 @@ const SignInForm = () => {
               Log In
             </button>
           </div>
-          <a>Forgot Password</a>
           {/* Display the status message */}
           {message && <p>{message}</p>}
         </form>
+        {/* Sign Up Section */}
+        <div className="mt-6 flex justify-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <a
+              onClick={() => {
+                navigate(`/sign-up`);
+              }}
+              className="font-semibold text-indigo-600 hover:text-indigo-500 cursor-pointer"
+            >
+              Sign up
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

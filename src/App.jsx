@@ -7,19 +7,24 @@ import ResetPassword from "./ui/auth/ResetPassword";
 import AuthGuard from "./contexts/AuthGuard";
 import { AuthProvider } from "./contexts/AuthContext";
 import { HomePage } from "./ui/auth/Home";
+import { AccountDetailsPage } from "./ui/auth/AccountDetailsPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <AuthGuard>
-        <HomePage />
-      </AuthGuard>
-    ),
+    element: <HomePage />,
   },
   {
     path: "/sign-up",
     element: <SignUpForm />,
+  },
+  {
+    path: "/account-details",
+    element: (
+      <AuthGuard>
+        <AccountDetailsPage />
+      </AuthGuard>
+    ),
   },
   {
     path: "/sign-in",

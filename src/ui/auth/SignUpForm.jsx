@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const INITIAL_VALUE_REGISTER = {
   firstName: "",
@@ -22,7 +22,6 @@ const INITIAL_VALUE_RESPONSE = {
 const SignUpForm = () => {
   const [registerData, setRegisterData] = useState(INITIAL_VALUE_REGISTER);
   const [message, setMessage] = useState("");
-  const [response, setResponse] = useState(INITIAL_VALUE_RESPONSE);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -39,7 +38,7 @@ const SignUpForm = () => {
 
     if (apiResponse.isSuccessfull) {
       console.log(apiResponse.value);
-      navigate(`/log-in`);
+      navigate(`/sign-in`);
     } else {
       console.log(apiResponse.errorMessage);
     }
@@ -132,6 +131,25 @@ const SignUpForm = () => {
                   setRegisterData({
                     ...registerData,
                     email: e.target.value,
+                  })
+                }
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div className="w-full">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              Phone Number
+            </label>
+            <div className="mt-2">
+              <input
+                type="text"
+                required
+                value={registerData.phone}
+                onChange={(e) =>
+                  setRegisterData({
+                    ...registerData,
+                    phone: e.target.value,
                   })
                 }
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

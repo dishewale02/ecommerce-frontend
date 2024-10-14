@@ -1,6 +1,26 @@
 import React from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const { isAuthenticated, checkAuthUser } = useAuth();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const onLogoutClickHandler = async () => {
+    await logout();
+    navigate("/sign-in");
+  };
+
+  const handleOnAccountButtonClick = async () => {
+    checkAuthUser();
+    navigate("/account-details");
+  };
+
+  const onLoginClickHandler = async () => {
+    navigate("/sign-in");
+  };
+
   return (
     <header className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -21,7 +41,10 @@ const Header = () => {
           </div>
           {/* Account and Cart */}
           <div className="flex items-center space-x-6">
-            <button className="text-lg hover:text-yellow-400 px-3 py-2 bg-gray-800 rounded-md">
+            <button
+              className="text-lg hover:text-yellow-400 px-3 py-2 bg-gray-800 rounded-md"
+              onClick={handleOnAccountButtonClick}
+            >
               Account
             </button>
             <button className="text-lg hover:text-yellow-400 px-3 py-2 bg-gray-800 rounded-md">
@@ -30,6 +53,22 @@ const Header = () => {
             <button className="text-lg hover:text-yellow-400 px-3 py-2 bg-gray-800 rounded-md">
               Cart
             </button>
+            {!isAuthenticated && (
+              <button
+                className="text-lg hover:text-yellow-400 px-3 py-2 bg-gray-800 rounded-md"
+                onClick={onLoginClickHandler}
+              >
+                LogIn
+              </button>
+            )}
+            {isAuthenticated && (
+              <button
+                className="text-lg hover:text-yellow-400 px-3 py-2 bg-gray-800 rounded-md"
+                onClick={onLogoutClickHandler}
+              >
+                LogOut
+              </button>
+            )}
           </div>
         </div>
       </div>
