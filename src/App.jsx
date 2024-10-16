@@ -8,6 +8,7 @@ import AuthGuard from "./contexts/AuthGuard";
 import { AuthProvider } from "./contexts/AuthContext";
 import { HomePage } from "./ui/auth/Home";
 import { AccountDetailsPage } from "./ui/auth/AccountDetailsPage";
+import { CategoryProvider } from "./contexts/CategoryContext";
 
 const router = createBrowserRouter([
   {
@@ -43,7 +44,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <CategoryProvider>
+        <RouterProvider router={router} />
+      </CategoryProvider>
     </AuthProvider>
   );
 }

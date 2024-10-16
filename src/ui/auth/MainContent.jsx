@@ -1,6 +1,9 @@
 import React from "react";
+import { useCategory } from "../../contexts/CategoryContext";
 
 const MainContent = () => {
+  const { categories } = useCategory();
+
   return (
     <main>
       {/* Hero Banner */}
@@ -21,25 +24,20 @@ const MainContent = () => {
           Shop by Category
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
-          {[
-            "Electronics",
-            "Fashion",
-            "Home & Kitchen",
-            "Beauty",
-            "Sports",
-            "Toys",
-          ].map((category, idx) => (
-            <div
-              key={idx}
+          {categories.map((category) => (
+            <button
+              key={category.id}
               className="bg-gray-100 p-4 text-center rounded-lg hover:bg-gray-200 transition"
             >
               <img
-                src={`https://via.placeholder.com/150?text=${category}`}
-                alt={category}
+                src={`https://fastly.picsum.photos/id/48/5000/3333.jpg?hmac=y3_1VDNbhii0vM_FN6wxMlvK27vFefflbUSH06z98so`}
+                alt={category.id}
                 className="mb-4 mx-auto"
               />
-              <h4 className="text-lg font-medium text-gray-800">{category}</h4>
-            </div>
+              <h3 className="text-lg font-medium text-gray-800">
+                {category.name}
+              </h3>
+            </button>
           ))}
         </div>
       </section>
