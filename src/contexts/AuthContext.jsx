@@ -10,6 +10,7 @@ const INITIAL_USER = {
   email: "",
   username: "",
   phone: "",
+  role: "",
 };
 
 export const AuthProvider = ({ children }) => {
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true); // Add a loading state
   const [responseErrorMessage, setResponseErrorMessage] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const login = async (credentials) => {
     setResponseErrorMessage(""); // Reset error message before login attempt
@@ -30,11 +32,12 @@ export const AuthProvider = ({ children }) => {
       if (response.data.isSuccessfull) {
         setIsAuthenticated(true);
         console.log(response.data.value);
+
         localStorage.setItem("accessToken", response.data.value.accessToken); // Save Access Token in local storage
         localStorage.setItem("refreshToken", response.data.value.refreshToken); // Save Refresh Token in local storage
 
-        console.log(localStorage.getItem("accessToken"));
-        console.log(localStorage.getItem("refreshToken"));
+        // console.log(localStorage.getItem("accessToken"));
+        // console.log(localStorage.getItem("refreshToken"));
 
         return {
           isSuccessfull: true,
@@ -64,6 +67,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     setIsAuthenticated(false);
+    setIsAdmin(false);
     localStorage.removeItem("accessToken"); // Remove token from local storage
     localStorage.removeItem("refreshToken"); // Remove token from local storage
   };
@@ -79,11 +83,18 @@ export const AuthProvider = ({ children }) => {
           }
         );
 
-        console.log(localStorage.getItem("accessToken"));
-        console.log(localStorage.getItem("refreshToken"));
+        //check if the user is admin.
+        if (response.data.value.role.toUpperCase() === "ADMIN") {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+
+        // console.log(localStorage.getItem("accessToken"));
+        // console.log(localStorage.getItem("refreshToken"));
 
         setUser(response.data.value);
-        console.log(response.data.value);
+        // console.log(response.data.value);
         setIsAuthenticated(true);
       } catch (error) {
         if (error.response?.status === 401) {
@@ -103,8 +114,8 @@ export const AuthProvider = ({ children }) => {
               }
             );
             setUser(response.data.value);
-            console.log("was re-authoriesed");
-            console.log(response.data.value);
+            // console.log("was re-authoriesed");
+            // console.log(response.data.value);
             setIsAuthenticated(true);
           } catch (refreshError) {
             console.error("Failed to refresh tokens", refreshError);
@@ -167,6 +178,8 @@ export const AuthProvider = ({ children }) => {
         logout,
         responseErrorMessage,
         checkAuthUser,
+        isAdmin,
+        setIsAdmin,
       }}
     >
       {children}

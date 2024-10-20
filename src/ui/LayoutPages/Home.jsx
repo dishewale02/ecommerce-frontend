@@ -1,13 +1,10 @@
 import MainContent from "./MainContent";
-import Footer from "./Footer";
-import Header from "./Header";
+import Layout from "./Layout";
 
 export const HomePage = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <MainContent />
-      <Footer />
     </div>
   );
 };

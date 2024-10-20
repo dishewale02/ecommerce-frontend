@@ -24,7 +24,7 @@ export const CategoryProvider = ({ children }) => {
       //save response into categories.
       setCategories(getAllCategoriesResponse.data.value);
       console.log("data fetch successfull ");
-      console.log(getAllCategoriesResponse.data.value);
+      // console.log(getAllCategoriesResponse.data.value);
       setCategoryResponseErrorMessage(null);
     } catch (error) {
       console.log("error in fetching");
