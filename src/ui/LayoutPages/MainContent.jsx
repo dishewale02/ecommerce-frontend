@@ -3,12 +3,14 @@ import { useCategory } from "../../contexts/CategoryContext";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCart } from "../../contexts/CartContext";
 
 const MainContent = () => {
   const { categories } = useCategory();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [randomProducts, setRandomProducts] = useState([]);
+  const { addToCart } = useCart();
 
   const onCategoryUpdateSelection = async (selectedCategory) => {
     navigate(`/products/${selectedCategory}`);
@@ -95,7 +97,7 @@ const MainContent = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {randomProducts.map((product) => {
-              console.log(product);
+              // console.log(product);
               // Split the imagePaths string by semicolon and get the first image
               const iPaths = product.imagePaths
                 ? product.imagePaths.split(";")
@@ -105,12 +107,13 @@ const MainContent = () => {
               return (
                 <div
                   key={product.id}
-                  onClick={() => {
-                    onProductCardClickHandler(product);
-                  }}
                   className="border p-4 rounded-md shadow-md bg-white transition-transform transform hover:scale-105"
                 >
                   <img
+                    key={product.id}
+                    onClick={() => {
+                      onProductCardClickHandler(product);
+                    }}
                     src={
                       firstImagePath
                         ? `https://localhost:44378${firstImagePath}`
@@ -126,7 +129,14 @@ const MainContent = () => {
                   <p className="text-green-600 font-medium mb-2">
                     Rs. {product.price.toFixed(2)}
                   </p>
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                  <button
+                    onClick={() => {
+                      console.log(product);
+                      // console.log(cartItems);
+                      return addToCart(product);
+                    }}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+                  >
                     Add to Cart
                   </button>
                 </div>

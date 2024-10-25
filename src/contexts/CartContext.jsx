@@ -23,12 +23,26 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  const updateCartItemQuantity = (id, newQuantity) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
   // Get the total number of products in the cart
   const cartCount = cartItems.length;
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, cartCount }}
+      value={{
+        cartItems,
+        addToCart,
+        updateCartItemQuantity,
+        removeFromCart,
+        cartCount,
+      }}
     >
       {children}
     </CartContext.Provider>

@@ -40,10 +40,10 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-yellow-400 text-gray-800">
+    <header className="bg-scroll text-gray-800">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <img
-          src="public/img/Web-Logo/Comp-logo2.png"
+          src="public/icons/Web-Logo/Comp-logo1.png"
           alt="Website Logo"
           className="h-20 cursor-pointer"
           onClick={onMyShopClickHandler}
