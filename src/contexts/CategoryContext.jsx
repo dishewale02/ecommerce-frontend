@@ -18,16 +18,16 @@ export const CategoryProvider = ({ children }) => {
   const fetchCategories = async () => {
     try {
       const getAllCategoriesResponse = await axios.get(
-        "https://localhost:44378/category/get-all-categories"
+        "https://localhost:44378/category"
       );
 
       //save response into categories.
       setCategories(getAllCategoriesResponse.data.value);
-      console.log("data fetch successfull ");
+      console.log("Category data fetch successfull ");
       // console.log(getAllCategoriesResponse.data.value);
       setCategoryResponseErrorMessage(null);
     } catch (error) {
-      console.log("error in fetching");
+      console.log("error in fetching Category data");
       setCategoryResponseErrorMessage(
         getAllCategoriesResponse.data.errorMessage
       );

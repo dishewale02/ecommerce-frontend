@@ -21,6 +21,7 @@ import AdminUserList from "./ui/Admin/Users/AdminUsersList";
 import ProductDetails from "./ui/Product/ProductDetails";
 import { CartProvider } from "./contexts/CartContext";
 import ShowCart from "./ui/Product/ShowCart";
+import AdminProductsList from "./ui/Admin/Products/AdminProductsList";
 
 const router = createBrowserRouter([
   {
@@ -39,12 +40,12 @@ const router = createBrowserRouter([
         path: "users",
         element: <AdminUserList />,
       },
+      {
+        path: "products",
+        element: <AdminProductsList />,
+      },
       // {
-      //   path: "products",
-      //   element: <Products />,
-      // },
-      // {
-      //   path: "settings",
+      //   path: "/settings",
       //   element: <Settings />,
       // },
     ],

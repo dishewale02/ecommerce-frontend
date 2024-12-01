@@ -13,10 +13,14 @@ const ProductList = () => {
   const { addToCart } = useCart(); // Get addToCart from CartContext
 
   const getProducts = async () => {
+    // console.log(category);
+
     const fetchFilteredProductResponse = await axios.get(
-      `https://localhost:44378/product` +
-        (category ? `?category=${category}` : "")
+      `https://localhost:44378/product/search-by-category` +
+        (category ? `?categoryName=${category}` : `?categoryName=all`)
     );
+
+    // console.log(fetchFilteredProductResponse.data);
 
     setProductList(fetchFilteredProductResponse.data.value);
     return fetchFilteredProductResponse.data.value;
@@ -27,6 +31,8 @@ const ProductList = () => {
   }, [category]);
 
   const onCategoryUpdateSelection = async (selectedCategory) => {
+    // console.log(selectedCategory);
+
     if (selectedCategory === "All") {
       navigate("/products");
     } else {
