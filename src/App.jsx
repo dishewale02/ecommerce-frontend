@@ -22,6 +22,8 @@ import ProductDetails from "./ui/Product/ProductDetails";
 import { CartProvider } from "./contexts/CartContext";
 import ShowCart from "./ui/Product/ShowCart";
 import AdminProductsList from "./ui/Admin/Products/AdminProductsList";
+import AdminSettings from "./ui/Admin/Setting/AdminSetting";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const router = createBrowserRouter([
   {
@@ -44,10 +46,10 @@ const router = createBrowserRouter([
         path: "products",
         element: <AdminProductsList />,
       },
-      // {
-      //   path: "/settings",
-      //   element: <Settings />,
-      // },
+      {
+        path: "settings",
+        element: <AdminSettings />,
+      },
     ],
   },
   {
@@ -102,13 +104,15 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <AuthProvider>
-      <CategoryProvider>
-        <CartProvider>
-          <RouterProvider router={router} />
-        </CartProvider>
-      </CategoryProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <CategoryProvider>
+          <CartProvider>
+            <RouterProvider router={router} />
+          </CartProvider>
+        </CategoryProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

@@ -13,7 +13,7 @@ const MessageModal = ({ message, onClose }) => {
 
   return (
     <div
-      className="fixed top-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg w-72"
+      className="fixed bottom-12 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg w-100"
       style={{
         zIndex: 1000, // Ensure it appears above other elements
       }}

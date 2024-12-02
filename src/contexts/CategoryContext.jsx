@@ -17,8 +17,14 @@ export const CategoryProvider = ({ children }) => {
   // Fetch all categories from the API
   const fetchCategories = async () => {
     try {
+      const accessToken = localStorage.getItem("accessToken");
       const getAllCategoriesResponse = await axios.get(
-        "https://localhost:44378/category"
+        "https://localhost:44378/category",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Pass token in Authorization header
+          },
+        }
       );
 
       //save response into categories.
@@ -27,7 +33,7 @@ export const CategoryProvider = ({ children }) => {
       // console.log(getAllCategoriesResponse.data.value);
       setCategoryResponseErrorMessage(null);
     } catch (error) {
-      console.log("error in fetching Category data");
+      // console.log("error in fetching Category data");
       setCategoryResponseErrorMessage(
         getAllCategoriesResponse.data.errorMessage
       );

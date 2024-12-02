@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import MessageModal from "../../MessageModal";
 
 // Mock API Call or Import Your API Service
 const fetchAllNonDeletedAndActiveUsers = async () => {
@@ -50,12 +51,13 @@ const deleteUser = async (userId) => {
         params: { userId }, // Pass `userId` as a query parameter
       }
     );
-    console.log(
-      "User deleted: " +
-        deleteAPIResponse.data.value.firstName +
-        " " +
-        deleteAPIResponse.data.value.lastName
-    );
+    // console.log(
+    //   "User deleted: " +
+    //     deleteAPIResponse.data.value.firstName +
+    //     " " +
+    //     deleteAPIResponse.data.value.lastName
+    // );
+
     if (deleteAPIResponse.data.isSuccessfull) {
     } else {
       console.log(deleteAPIResponse.data.errorMessage);
@@ -67,31 +69,34 @@ const deleteUser = async (userId) => {
 
 const activateDeletedUser = async (userId) => {
   try {
-    // console.log(userId);
-
     const accessToken = localStorage.getItem("accessToken");
-    const deleteAPIResponse = await axios.post(
-      `https://localhost:44378/admin/activate-deleted-user`,
-      null, // No body needed, so send `null`.
+
+    // Make the API request using the DELETE method like in activateDeletedProduct
+    const activateAPIResponse = await axios.delete(
+      `https://localhost:44378/admin/activate-deleted-user?userId=${userId}`,
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`, // Add Authorization header
         },
-        params: { userId }, // Pass `userId` as a query parameter
       }
     );
-    console.log(
-      "User activated: " +
-        deleteAPIResponse.data.value.firstName +
-        " " +
-        deleteAPIResponse.data.value.lastName
-    );
-    if (deleteAPIResponse.data.isSuccessfull) {
+
+    // Check the response status and log messages
+    if (activateAPIResponse.data.isSuccessfull) {
+      // console.log(
+      //   "User activated successfully: " +
+      //     activateAPIResponse.data.value.firstName +
+      //     " " +
+      //     activateAPIResponse.data.value.lastName
+      // );
     } else {
-      console.log(deleteAPIResponse.data.errorMessage);
+      console.log(
+        "Error activating user:",
+        activateAPIResponse.data.errorMessage
+      );
     }
   } catch (error) {
-    console.log(error);
+    console.error("Error in activating user:", error);
   }
 };
 
@@ -145,7 +150,6 @@ const AdminUserList = () => {
 
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [message, setMessage] = useState("");
   const [newUser, setNewUser] = useState({
     firstName: "",
     lastName: "",
@@ -168,6 +172,8 @@ const AdminUserList = () => {
     confirmPassword: "",
     role: "",
   });
+  const [message, setMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const getUsers = async () => {
@@ -206,36 +212,55 @@ const AdminUserList = () => {
       );
       setDeletedAndNonActiveUsers((prevUsers) => [...prevUsers, userToDelete]);
 
-      setMessage("User deleted successfully.");
+      setMessage("User deleted successfully: " + userToDelete);
+      setShowModal(true);
     } catch (error) {
       console.error("Error deleting user:", error);
       setMessage("Error deleting user.");
+      setShowModal(true);
     }
   };
 
   const handleActivateUser = async (userId) => {
     try {
-      // Make an API call to activate the deleted/inactive user
+      // Make an API call to activate the deleted user
       await activateDeletedUser(userId);
 
       // Remove the activated user from the deletedAndNonActiveUsers state
-      setDeletedAndNonActiveUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== userId)
-      );
+      setDeletedAndNonActiveUsers((prevUsers) => {
+        // Ensure prevUsers is always an array
+        if (!Array.isArray(prevUsers)) return [];
+        return prevUsers.filter((user) => user.id !== userId);
+      });
 
-      // Optionally, you can add the activated user to the nonDeletedAndActiveUsers state immediately after activation
+      // Fetch the user from the previous state before activation
       const userToActivate = deletedAndNonActiveUsers.find(
         (user) => user.id === userId
       );
-      setNonDeletedAndActiveUsers((prevUsers) => [
-        ...prevUsers,
-        userToActivate,
-      ]);
 
-      setMessage("User activated successfully.");
+      // Add the activated user to the nonDeletedAndActiveUsers state
+      if (userToActivate) {
+        setNonDeletedAndActiveUsers((prevUsers) => {
+          // Ensure prevUsers is always an array
+          if (!Array.isArray(prevUsers)) return [];
+          return [...prevUsers, userToActivate];
+        });
+      }
+
+      console.log(userToActivate);
+
+      setMessage(
+        userToActivate
+          ? `User activated successfully: ${
+              userToActivate.firstName + " " + userToActivate.lastName
+            }`
+          : "User activated successfully."
+      );
+      setShowModal(true);
     } catch (error) {
       console.error("Error activating user:", error);
       setMessage("Error activating user.");
+      setShowModal(true);
     }
   };
 
@@ -310,7 +335,7 @@ const AdminUserList = () => {
   return (
     <div className="p-6 bg-white rounded shadow-md">
       <h2 className="text-xl font-semibold mb-4">Non-Admin Active Users</h2>
-      <h2 className="text-xl font-semibold mb-4">{message}</h2>
+      {/* <h2 className="text-xl font-semibold mb-4">{message}</h2> */}
       <button
         className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         onClick={() => setIsAddingUser(true)}
@@ -655,6 +680,10 @@ const AdminUserList = () => {
         <p className="text-gray-500">
           No non-admin nonDeletedAndActiveUsers found.
         </p>
+      )}
+      {/* Show modal if there's a message */}
+      {showModal && (
+        <MessageModal message={message} onClose={() => setShowModal(false)} />
       )}
     </div>
   );

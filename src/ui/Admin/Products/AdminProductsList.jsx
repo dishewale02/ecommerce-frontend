@@ -1,6 +1,6 @@
 import React, { useState, useEffect, act } from "react";
 import axios from "axios";
-import MessageModal from "./MessageModal";
+import MessageModal from "../../MessageModal";
 
 const fetchNonDeletedAndActiveProducts = async () => {
   try {
@@ -251,7 +251,7 @@ const AdminProductsList = () => {
   return (
     <div className="p-6 bg-white rounded shadow-md">
       <h2 className="text-xl font-semibold mb-4">Product List</h2>
-      <h2 className="text-xl font-semibold mb-4">{message}</h2>
+      {/* <h2 className="text-xl font-semibold mb-4">{message}</h2> */}
       {!isShowDeletedTable && (
         <button
           className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
