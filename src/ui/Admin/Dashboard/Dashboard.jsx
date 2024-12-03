@@ -99,7 +99,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [categories]);
+  }, [categories || users]);
 
   const refreshButtonHandler = () => {
     fetchCategories();

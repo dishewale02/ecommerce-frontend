@@ -248,6 +248,30 @@ const AdminProductsList = () => {
     setIsShowDeletedTable(!isShowDeletedTable);
   };
 
+  const handleExportActiveProducts = async () => {
+    try {
+      //get access token.
+      const accessToken = localStorage.getItem("accessToken");
+
+      const folderPath =
+        "C:\\Users\\Dipak Shewale\\Desktop\\STUDY\\export files";
+      //send request in backend.
+      const exportProductsResponse = await axios.get(
+        `https://localhost:44378/admin/export-all-active-users?folderPath=${folderPath}`
+      );
+
+      // console.log(exportProductsResponse.data);
+      if (exportProductsResponse.data.isSuccessfull) {
+        setMessage(
+          "Product List Exported at " + exportProductsResponse.data.value
+        );
+        setShowModal(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="p-6 bg-white rounded shadow-md">
       <h2 className="text-xl font-semibold mb-4">Product List</h2>
@@ -265,6 +289,12 @@ const AdminProductsList = () => {
         onClick={() => handleIsShowDeletedProductsTable()}
       >
         Show/Hide Deleted Products
+      </button>
+      <button
+        className="mb-6 ml-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        onClick={() => handleExportActiveProducts()}
+      >
+        Export Active Products Table
       </button>
 
       {isAddingProduct && (
