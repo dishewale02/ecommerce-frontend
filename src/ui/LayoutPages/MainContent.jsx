@@ -12,8 +12,9 @@ const MainContent = () => {
   const [randomProducts, setRandomProducts] = useState([]);
   const { addToCart } = useCart();
 
-  const onCategoryUpdateSelection = async (selectedCategory) => {
-    navigate(`/products/${selectedCategory}`);
+  const onCategoryUpdateSelection = async (selectedCategory, searchField) => {
+    console.log(selectedCategory + " " + searchField);
+    navigate(`/products/${selectedCategory}/${searchField}`);
   };
 
   const GetProductList = async () => {
@@ -40,7 +41,9 @@ const MainContent = () => {
 
   const categoryOnSelectHandler = async (categoryName) => {
     const value = categoryName;
-    await onCategoryUpdateSelection(value);
+    const searchField = null;
+    console.log(value + " " + searchField)
+    await onCategoryUpdateSelection(value, searchField);
   };
 
   const onProductCardClickHandler = async (product) => {

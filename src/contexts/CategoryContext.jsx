@@ -11,6 +11,9 @@ export const useCategory = () => useContext(CategoryContext);
 export const CategoryProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [categoryLoading, setCategoryLoading] = useState(false);
+  const [searchedProducts, setSearchedProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchField, setSearchField] = useState("");
   const [categoryResponseErrorMessage, setCategoryResponseErrorMessage] =
     useState(null);
 
@@ -29,7 +32,7 @@ export const CategoryProvider = ({ children }) => {
 
       //save response into categories.
       setCategories(getAllCategoriesResponse.data.value);
-      console.log("Category data fetch successfull ");
+      // console.log("Category data fetch successfull ");
       // console.log(getAllCategoriesResponse.data.value);
       setCategoryResponseErrorMessage(null);
     } catch (error) {
@@ -40,9 +43,33 @@ export const CategoryProvider = ({ children }) => {
     }
   };
 
+  const fetchSearchedProducts = async (category, searchField) => {
+    try {
+      const getSearchedProductsResponse = await axios.get(
+        `https://localhost:44378/product/search-product`,
+        {
+          params: {
+            category: category || "all",
+            searchField: searchField || "null",
+          },
+        }
+      );
+      console.log(getSearchedProductsResponse.data);
+      if (getSearchedProductsResponse.data.isSuccessfull) {
+        const value = getSearchedProductsResponse.data.value;
+        setSearchedProducts(value);
+      } else {
+        console.log(getSearchedProductsResponse.data.errorMessage);
+        setSearchedProducts(null);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Load categories on mount
   useEffect(() => {
-    console.log("category useEffect called.");
+    // console.log("category useEffect called.");
     fetchCategories();
   }, []);
 
@@ -56,6 +83,12 @@ export const CategoryProvider = ({ children }) => {
         setCategoryLoading,
         categoryResponseErrorMessage,
         setCategoryResponseErrorMessage,
+        fetchSearchedProducts,
+        searchedProducts,
+        setSelectedCategory,
+        setSearchField,
+        selectedCategory,
+        searchField,
       }}
     >
       {children}

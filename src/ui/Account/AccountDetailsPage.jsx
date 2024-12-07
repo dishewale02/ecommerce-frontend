@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AccountDetails from "./AccountDetails";
 import EditAccountDetails from "./EditAccountDetails";
+import MessageModal from "../MessageModal";
 
 export const AccountDetailsPage = () => {
   const { setUser, User } = useAuth();
   const [message, setMessage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+  const [showModel, setShowModal] = useState(false);
 
   const toggleEditMode = () => {
     setIsEditing(!isEditing);
@@ -20,7 +22,6 @@ export const AccountDetailsPage = () => {
   const handleEditAccountDetails = async (e) => {
     e.preventDefault();
     setMessage(""); // Clear previous messages
-
     // Prepare updated user data
     const updatedUser = {
       id: User.id,
@@ -53,14 +54,18 @@ export const AccountDetailsPage = () => {
 
         setUser(response.data.value); // Update user in context with new data
         setMessage("Account details updated successfully!"); // Success message
+        console.log("Account details updated successfully!");
+        setShowModal(true);
         setIsEditing(false); // Exit edit mode
       } else {
         console.log(response.data.errorMessage);
         setMessage(response.data.errorMessage); // Error message
+        setShowModal(true);
       }
     } catch (error) {
       setMessage("An error occurred while updating your account."); // Catch error
       console.error(error);
+      setShowModal(true);
     }
   };
 
@@ -80,6 +85,10 @@ export const AccountDetailsPage = () => {
           onChange={(updatedData) => setUser(updatedData)}
           message={message} // Pass message to EditAccountDetails
         />
+      )}
+      {/* Show modal if there's a message */}
+      {showModel && (
+        <MessageModal message={message} onClose={() => setShowModal(false)} />
       )}
     </div>
   );

@@ -1,52 +1,26 @@
-import React, { useEffect, useState } from "react";
 import Layout from "../LayoutPages/Layout";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../contexts/CartContext";
 import { useCategory } from "../../contexts/CategoryContext";
-import { useNavigate, useParams } from "react-router-dom";
-import { useCart } from "../../contexts/CartContext"; // Import useCart
+import { useEffect } from "react";
 
 const ProductList = () => {
-  const [productList, setProductList] = useState([]);
-  const { categories } = useCategory();
   const navigate = useNavigate();
-  const { category } = useParams();
-  const { addToCart } = useCart(); // Get addToCart from CartContext
-
-  const getProducts = async () => {
-    // console.log(category);
-
-    const fetchFilteredProductResponse = await axios.get(
-      `https://localhost:44378/product/search-by-category` +
-        (category ? `?categoryName=${category}` : `?categoryName=all`)
-    );
-
-    // console.log(fetchFilteredProductResponse.data);
-
-    setProductList(fetchFilteredProductResponse.data.value);
-    return fetchFilteredProductResponse.data.value;
-  };
+  const { addToCart } = useCart();
+  const {
+    searchedProducts,
+    selectedCategory,
+    searchField,
+    fetchSearchedProducts,
+  } = useCategory();
 
   useEffect(() => {
-    getProducts();
-  }, [category]);
+    fetchSearchedProducts(selectedCategory, searchField);
+  }, [selectedCategory]);
 
-  const onCategoryUpdateSelection = async (selectedCategory) => {
-    // console.log(selectedCategory);
-
-    if (selectedCategory === "All") {
-      navigate("/products");
-    } else {
-      navigate(`/products/${selectedCategory}`);
-    }
-  };
-
-  const categoryOnSelectHandler = async (e) => {
-    const value = e.target.value;
-    await onCategoryUpdateSelection(value);
-  };
-
-  const onProductCardClickHandler = async (product) => {
-    navigate(`/product/details/${product.id}`);
+  // Navigate to product details page
+  const handleProductClick = (productId) => {
+    navigate(`/product/details/${productId}`);
   };
 
   return (
@@ -54,31 +28,10 @@ const ProductList = () => {
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Product List</h1>
 
-        {/* Category Filter */}
-        <div className="mb-6">
-          <label className="mr-4 font-medium">Filter by Category:</label>
-          <select
-            onChange={categoryOnSelectHandler}
-            className="border rounded-md p-2"
-            value={category}
-          >
-            <option value="All">All</option>
-            {Array.isArray(categories) && categories.length > 0 ? (
-              categories.map((c, index) => (
-                <option key={index} value={c.name}>
-                  {c.name}
-                </option>
-              ))
-            ) : (
-              <option>No categories available</option>
-            )}
-          </select>
-        </div>
-
         {/* Product List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {productList &&
-            productList.map((product) => {
+          {Array.isArray(searchedProducts) && searchedProducts.length > 0 ? ( // Safeguard against null/undefined productList
+            searchedProducts.map((product) => {
               const imagePaths = product.imagePaths
                 ? product.imagePaths.split(";")
                 : [];
@@ -90,13 +43,15 @@ const ProductList = () => {
                   key={product.id}
                   className="border p-4 rounded-md shadow-md bg-white transition-transform transform hover:scale-105 product-card"
                 >
-                  <div className="h-60 w-full mb-4">
+                  <div
+                    className="h-60 w-full mb-4 cursor-pointer"
+                    onClick={() => handleProductClick(product.id)}
+                  >
                     <img
-                      onClick={() => onProductCardClickHandler(product)}
                       src={
                         firstImagePath
                           ? `https://localhost:44378${firstImagePath}`
-                          : ""
+                          : "/placeholder-image.png"
                       }
                       alt={product.name}
                       className="object-cover w-full h-full rounded-md"
@@ -113,13 +68,18 @@ const ProductList = () => {
                   </p>
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
-                    onClick={() => addToCart(product)} // Add to cart when button is clicked
+                    onClick={() => addToCart(product)}
                   >
                     Add to Cart
                   </button>
                 </div>
               );
-            })}
+            })
+          ) : (
+            <p className="text-gray-500 text-center col-span-full">
+              No products found.
+            </p>
+          )}
         </div>
       </div>
     </Layout>
